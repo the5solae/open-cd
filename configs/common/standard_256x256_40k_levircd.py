@@ -22,7 +22,7 @@ train_pipeline = [
 ]
 test_pipeline = [
     dict(type='MultiImgLoadImageFromFile'),
-    dict(type='MultiImgResize', scale=(1024, 1024), keep_ratio=True),
+    dict(type='MultiImgResize', scale=(1280, 1280), keep_ratio=True),
     # add loading annotation after ``Resize`` because ground truth
     # does not need to do resize data transform
     dict(type='MultiImgLoadAnnotations'),
@@ -39,7 +39,8 @@ tta_pipeline = [
                 for r in img_ratios
             ],
             [
-                dict(type='MultiImgRandomFlip', prob=0., direction='horizontal'),
+                dict(type='MultiImgRandomFlip',
+                     prob=0., direction='horizontal'),
                 dict(type='MultiImgRandomFlip', prob=1., direction='horizontal')
             ],
             [dict(type='MultiImgLoadAnnotations')],
@@ -56,7 +57,7 @@ train_dataloader = dict(
         data_root=data_root,
         data_prefix=dict(
             seg_map_path='train/label',
-            img_path_from='train/A', 
+            img_path_from='train/A',
             img_path_to='train/B'),
         pipeline=train_pipeline))
 val_dataloader = dict(
@@ -92,7 +93,7 @@ test_evaluator = dict(
     iou_metrics=['mFscore', 'mIoU'])
 
 # optimizer
-optimizer=dict(
+optimizer = dict(
     type='AdamW', lr=0.001, betas=(0.9, 0.999), weight_decay=0.05)
 optim_wrapper = dict(type='OptimWrapper', optimizer=optimizer)
 # learning policy
@@ -119,5 +120,5 @@ default_hooks = dict(
     checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=4000,
                     save_best='mIoU'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
-    visualization=dict(type='CDVisualizationHook', interval=1, 
-                       img_shape=(1024, 1024, 3)))
+    visualization=dict(type='CDVisualizationHook', interval=1,
+                       img_shape=(1280, 1280, 3)))
